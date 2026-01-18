@@ -12,6 +12,8 @@ import { processInitialUrl } from "@/app/urls";
 import { setupSecondInstanceHandling } from "@/app/instance";
 import { runOnboardingOrInitialWindow } from "@/app/onboarding";
 import { setupAppLifecycle } from "@/app/lifecycle";
+import { windowsController } from "@/controllers/windows-controller";
+import { app } from "electron";
 
 // Handle initial URL (runs asynchronously)
 processInitialUrl();
@@ -24,6 +26,11 @@ setupPlatformIntegration();
 
 // Open onboarding / create initial window
 runOnboardingOrInitialWindow();
+
+// Show floating widget after app is ready
+app.whenReady().then(() => {
+  windowsController.floatingWidget.getSingletonWindow();
+});
 
 // App lifecycle events
 setupAppLifecycle();

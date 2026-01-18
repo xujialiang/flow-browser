@@ -12,7 +12,7 @@ import { setWindowSpace } from "@/ipc/session/spaces";
 import { WebContents } from "electron";
 import { TabGroupMode } from "~/types/tabs";
 
-export const NEW_TAB_URL = "flow://new-tab";
+export const NEW_TAB_URL = "https://www.doubao.com/chat/";
 const ARCHIVE_CHECK_INTERVAL_MS = 10 * 1000;
 
 type TabsControllerEvents = {

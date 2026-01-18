@@ -781,6 +781,37 @@ const shortcutsAPI: FlowShortcutsAPI = {
   }
 };
 
+// FLOATING WIDGET API //
+const floatingWidgetAPI = {
+  togglePanel: () => {
+    return ipcRenderer.send("floating-widget:toggle-panel");
+  },
+  moveIcon: async (deltaX: number, deltaY: number) => {
+    return ipcRenderer.invoke("floating-widget:move-icon", deltaX, deltaY);
+  },
+  snapIcon: async () => {
+    return ipcRenderer.invoke("floating-widget:snap-icon");
+  },
+  resizePanel: async (width: number, height: number) => {
+    return ipcRenderer.invoke("floating-widget:resize-panel", width, height);
+  },
+  movePanel: async (deltaX: number, deltaY: number) => {
+    return ipcRenderer.invoke("floating-widget:move-panel", deltaX, deltaY);
+  },
+  onIconHoverEnter: () => {
+    return ipcRenderer.send("floating-widget:icon-hover-enter");
+  },
+  onIconHoverLeave: () => {
+    return ipcRenderer.send("floating-widget:icon-hover-leave");
+  },
+  onMenuHoverEnter: () => {
+    return ipcRenderer.send("floating-widget:menu-hover-enter");
+  },
+  onMenuHoverLeave: () => {
+    return ipcRenderer.send("floating-widget:menu-hover-leave");
+  }
+};
+
 // EXPOSE FLOW API //
 const flowAPI: typeof flow = {
   // App APIs
@@ -823,3 +854,16 @@ const flowAPI: typeof flow = {
   onboarding: wrapAPI(onboardingAPI, "settings")
 };
 contextBridge.exposeInMainWorld("flow", flowAPI);
+
+// Expose floating widget API separately for floating widget window
+contextBridge.exposeInMainWorld("electronAPI", {
+  togglePanel: floatingWidgetAPI.togglePanel,
+  moveIcon: floatingWidgetAPI.moveIcon,
+  snapIcon: floatingWidgetAPI.snapIcon,
+  resizePanel: floatingWidgetAPI.resizePanel,
+  movePanel: floatingWidgetAPI.movePanel,
+  onIconHoverEnter: floatingWidgetAPI.onIconHoverEnter,
+  onIconHoverLeave: floatingWidgetAPI.onIconHoverLeave,
+  onMenuHoverEnter: floatingWidgetAPI.onMenuHoverEnter,
+  onMenuHoverLeave: floatingWidgetAPI.onMenuHoverLeave
+});

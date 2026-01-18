@@ -42,6 +42,14 @@ export const STATIC_DOMAINS: StaticDomainInfo[] = [
       route: "onboarding"
     }
   },
+  {
+    protocol: "flow-internal",
+    hostname: "floating-widget",
+    actual: {
+      type: "route",
+      route: "floating-widget"
+    }
+  },
 
   // flow
   {
