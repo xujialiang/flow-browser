@@ -48,11 +48,16 @@ export class FloatingWidgetWindow extends BaseWindow {
       },
     });
 
+    // 设置窗口层级为屏幕保护级别，确保始终在最顶层
+    iconWindow.setAlwaysOnTop(true, 'screen-saver');
+
     iconWindow.loadURL("flow-internal://floating-widget/?mode=icon");
 
     iconWindow.webContents.on("did-finish-load", () => {
       console.log("[FLOATING_WIDGET] Icon loaded, showing");
       iconWindow.show();
+      // 确保 icon 在所有窗口之上
+      iconWindow.moveTop();
     });
 
     // 监听图标点击事件
@@ -133,6 +138,9 @@ export class FloatingWidgetWindow extends BaseWindow {
       },
     });
 
+    // 设置窗口层级为屏幕保护级别
+    this.panelWindow.setAlwaysOnTop(true, 'screen-saver');
+
     this.panelWindow.loadURL("flow-internal://floating-widget/?mode=panel");
 
     this.panelWindow.webContents.on("did-finish-load", () => {
@@ -158,6 +166,8 @@ export class FloatingWidgetWindow extends BaseWindow {
     } else if (!this.isMenuVisible) {
       this.menuWindow.show();
       this.isMenuVisible = true;
+      // 确保 icon 在菜单之上
+      this.browserWindow.moveTop();
     }
   }
 
@@ -220,12 +230,17 @@ export class FloatingWidgetWindow extends BaseWindow {
       },
     });
 
+    // 设置窗口层级为屏幕保护级别
+    this.menuWindow.setAlwaysOnTop(true, 'screen-saver');
+
     this.menuWindow.loadURL("flow-internal://floating-widget/?mode=menu");
 
     this.menuWindow.webContents.on("did-finish-load", () => {
       console.log("[FLOATING_WIDGET] Menu loaded, showing");
       this.menuWindow!.show();
       this.isMenuVisible = true;
+      // 确保 icon 在菜单之上
+      this.browserWindow.moveTop();
     });
 
     this.menuWindow.on("closed", () => {
@@ -247,6 +262,9 @@ export class FloatingWidgetWindow extends BaseWindow {
       this.backgroundWindow.show();
       this.isBackgroundVisible = true;
     }
+    
+    // 无论哪种情况，都确保 icon 始终在最上层
+    this.browserWindow.moveTop();
   }
 
   private hideBackground() {
@@ -308,6 +326,9 @@ export class FloatingWidgetWindow extends BaseWindow {
       },
     });
 
+    // 设置窗口层级为屏幕保护级别（但低于icon）
+    this.backgroundWindow.setAlwaysOnTop(true, 'screen-saver');
+
     // 设置背景窗口忽略鼠标事件，避免干扰 icon 的 hover 事件
     this.backgroundWindow.setIgnoreMouseEvents(true);
 
@@ -317,6 +338,8 @@ export class FloatingWidgetWindow extends BaseWindow {
       console.log("[FLOATING_WIDGET] Background loaded, showing");
       this.backgroundWindow!.show();
       this.isBackgroundVisible = true;
+      // 确保 icon 在背景之上
+      this.browserWindow.moveTop();
     });
 
     this.backgroundWindow.on("closed", () => {
