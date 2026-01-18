@@ -45,6 +45,11 @@ export function SidebarTab({ tab, isFocused }: { tab: TabData; isFocused: boolea
 
   const handleCloseTab = (e: React.MouseEvent) => {
     if (!tab.id) return;
+    // Prevent closing pinned tabs
+    if (tab.isPinned) {
+      e.preventDefault();
+      return;
+    }
     e.preventDefault();
     flow.tabs.closeTab(tab.id);
   };
@@ -168,8 +173,8 @@ export function SidebarTab({ tab, isFocused }: { tab: TabData; isFocused: boolea
           </div>
           {/* Right side */}
           <div className={cn("flex flex-row items-center gap-0.5", open && "flex-shrink-0")}>
-            {/* Close tab button */}
-            {isHovered && (
+            {/* Close tab button - Only show for non-pinned tabs */}
+            {!tab.isPinned && isHovered && (
               <motion.div whileTap={{ scale: 0.95 }} className="flex items-center justify-center">
                 <Button
                   variant="ghost"

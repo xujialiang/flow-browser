@@ -13,6 +13,8 @@ import { WebContents } from "electron";
 import { TabGroupMode } from "~/types/tabs";
 
 export const NEW_TAB_URL = "https://www.doubao.com/chat/";
+export const AI_ASSISTANT_URL = "https://www.doubao.com/chat/";
+export const PINNED_TAB_POSITION = -999999; // Very low position to ensure it's first (tabs are sorted by position ascending)
 const ARCHIVE_CHECK_INTERVAL_MS = 10 * 1000;
 
 type TabsControllerEvents = {
@@ -91,6 +93,44 @@ class TabsController extends TypedEventEmitter<TabsControllerEvents> {
     this.on("destroyed", () => {
       clearInterval(interval);
     });
+  }
+
+  /**
+   * Create a pinned AI Assistant tab for a window space
+   */
+  public async createPinnedAIAssistantTab(
+    windowId: number,
+    profileId: string,
+    spaceId: string
+  ): Promise<Tab> {
+    // Check if pinned tab already exists in this space
+    const existingPinnedTab = this.getPinnedTabInSpace(windowId, spaceId);
+    if (existingPinnedTab) {
+      return existingPinnedTab;
+    }
+
+    // Load profile if not already loaded
+    await loadedProfilesController.load(profileId);
+
+    // Create pinned tab
+    const tab = this.internalCreateTab(windowId, profileId, spaceId, undefined, {
+      isPinned: true,
+      position: PINNED_TAB_POSITION,
+      title: "我的AI助理"
+    });
+
+    // Load AI assistant URL
+    tab.loadURL(AI_ASSISTANT_URL);
+
+    return tab;
+  }
+
+  /**
+   * Get the pinned tab in a specific space
+   */
+  public getPinnedTabInSpace(windowId: number, spaceId: string): Tab | undefined {
+    const tabsInSpace = this.getTabsInWindowSpace(windowId, spaceId);
+    return tabsInSpace.find(tab => tab.isPinned);
   }
 
   /**
@@ -648,6 +688,23 @@ class TabsController extends TypedEventEmitter<TabsControllerEvents> {
       }
     }
     return smallestPosition;
+  }
+
+  /**
+   * Get the largest position of non-pinned tabs in a specific space
+   * Used for inserting new tabs after the pinned tab
+   */
+  public getLargestNonPinnedPosition(windowId: number, spaceId: string): number {
+    let largestPosition = -1;
+    for (const tab of this.tabs.values()) {
+      if (tab.getWindow().id === windowId && tab.spaceId === spaceId && !tab.isPinned) {
+        if (tab.position > largestPosition) {
+          largestPosition = tab.position;
+        }
+      }
+    }
+    // If no non-pinned tabs exist, start from 0
+    return largestPosition === -1 ? 0 : largestPosition;
   }
 
   /**

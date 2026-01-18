@@ -26,6 +26,7 @@ export function getTabData(tab: Tab): TabData {
     muted: tab.muted,
     fullScreen: tab.fullScreen,
     isPictureInPicture: tab.isPictureInPicture,
+    isPinned: tab.isPinned,
     faviconURL: tab.faviconURL,
     asleep: tab.asleep,
 

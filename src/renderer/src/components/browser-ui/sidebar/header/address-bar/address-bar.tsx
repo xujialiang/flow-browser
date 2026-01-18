@@ -11,7 +11,13 @@ function FakeAddressBar({ className }: { className?: string }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const { addressUrl, focusedTab } = useTabs();
 
+  // Check if the focused tab is pinned
+  const isDisabled = focusedTab?.isPinned || false;
+
   const handleClick = () => {
+    // Don't open omnibox if the tab is pinned
+    if (isDisabled) return;
+
     const inputBox = inputRef.current;
     if (!inputBox) return;
 
@@ -49,7 +55,8 @@ function FakeAddressBar({ className }: { className?: string }) {
         "select-none selection:bg-transparent !ring-0",
         "transition-colors duration-150",
         "bg-white/20 dark:bg-white/15",
-        "hover:bg-white/25 dark:hover:bg-white/20",
+        // Apply disabled styles when pinned tab is active
+        isDisabled ? "opacity-50 cursor-not-allowed" : "hover:bg-white/25 dark:hover:bg-white/20",
         isPlaceholder ? "text-black/60 dark:text-white/60" : "text-black dark:text-white",
         className
       )}

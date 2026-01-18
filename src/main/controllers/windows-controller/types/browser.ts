@@ -107,8 +107,13 @@ export class BrowserWindow extends BaseWindow<BrowserWindowEvents> {
 
     // Set Initial Space //
     spacesController.getLastUsed().then((space) => {
-      if (space && !this.currentSpaceId) {
+  if (space && !this.currentSpaceId) {
         this.setCurrentSpace(space.id);
+        // Create pinned AI Assistant tab for this window/space
+        tabsController.createPinnedAIAssistantTab(this.id, space.profileId, space.id).then((pinnedTab) => {
+          // Set the pinned tab as active
+          tabsController.setActiveTab(pinnedTab);
+        });
       }
     });
 

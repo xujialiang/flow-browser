@@ -23,6 +23,7 @@ export type TabData = {
   muted: boolean;
   fullScreen: boolean;
   isPictureInPicture: boolean;
+  isPinned: boolean;
   faviconURL: string | null;
   asleep: boolean;
 

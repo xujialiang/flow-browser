@@ -18,6 +18,9 @@ export async function persistTabToStorage(tab: Tab) {
   const window = tab.getWindow();
   if (window.browserWindowType !== "normal") return;
 
+  // Don't save pinned tabs as they will be created automatically
+  if (tab.isPinned) return;
+
   // Prevent saving tabs stuck in sleep mode
   // if (tab.url === SLEEP_MODE_URL) return;
   // if (tab.asleep) return;
@@ -136,7 +139,10 @@ async function createTabsFromTabDatas(tabDatas: TabData[]) {
   for (const [, tabs] of Object.entries(windowTabs)) {
     const window = await browserWindowsController.create();
 
-    for (const tabData of tabs) {
+    // Don't restore pinned tabs as they will be created automatically by window initialization
+    const tabsToRestore = tabs.filter(tab => !tab.isPinned);
+
+    for (const tabData of tabsToRestore) {
       tabsController.createTab(window.id, tabData.profileId, tabData.spaceId, undefined, {
         asleep: true,
         position: tabData.position,

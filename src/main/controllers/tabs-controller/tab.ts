@@ -32,6 +32,7 @@ type TabStateProperty =
   | "faviconURL"
   | "fullScreen"
   | "isPictureInPicture"
+  | "isPinned"
   | "asleep"
   | "lastActiveAt"
   | "position";
@@ -71,6 +72,7 @@ export interface TabCreationOptions {
   // Options
   asleep?: boolean;
   position?: number;
+  isPinned?: boolean;
 
   // Old States to be restored
   title?: string;
@@ -133,6 +135,7 @@ export class Tab extends TypedEventEmitter<TabEvents> {
   public faviconURL: string | null = null;
   public fullScreen: boolean = false;
   public isPictureInPicture: boolean = false;
+  public isPinned: boolean = false;
   public asleep: boolean = false;
   public createdAt: number;
   public lastActiveAt: number;
@@ -195,6 +198,7 @@ export class Tab extends TypedEventEmitter<TabEvents> {
       // Options
       asleep = false,
       position,
+      isPinned = false,
 
       // Old States to be restored
       title,
@@ -210,13 +214,20 @@ export class Tab extends TypedEventEmitter<TabEvents> {
       this.uniqueId = uniqueId;
     }
 
+    // Set isPinned
+    this.isPinned = isPinned;
+
     // Set position
     if (position !== undefined) {
       this.position = position;
     } else {
-      // Get the smallest position
-      const smallestPosition = this.tabsController.getSmallestPosition();
-      this.position = smallestPosition - 1;
+      // For non-pinned tabs, insert after the last non-pinned tab in the same space
+      // This ensures new tabs are always placed after the pinned tab
+      const largestNonPinnedPosition = this.tabsController.getLargestNonPinnedPosition(
+        window.id,
+        spaceId
+      );
+      this.position = largestNonPinnedPosition + 1;
     }
 
     // Create WebContentsView
@@ -968,6 +979,12 @@ export class Tab extends TypedEventEmitter<TabEvents> {
    */
   public destroy() {
     if (this.isDestroyed) return;
+
+    // Prevent pinned tabs from being closed
+    if (this.isPinned) {
+      console.warn("Cannot destroy pinned tab");
+      return;
+    }
 
     this.isDestroyed = true;
     this.emit("destroyed");
