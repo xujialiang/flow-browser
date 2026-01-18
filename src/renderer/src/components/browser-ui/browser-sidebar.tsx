@@ -11,7 +11,7 @@ import {
 import { useEffect, useRef, useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { CollapseMode, SidebarVariant, SidebarSide } from "@/components/browser-ui/main";
-import { PlusIcon, SettingsIcon } from "lucide-react";
+import { PlusIcon, SettingsIcon, UserCheck, Bell, Sparkles } from "lucide-react";
 import { SidebarSpacesSwitcher } from "@/components/browser-ui/sidebar/spaces-switcher";
 import { ScrollableSidebarContent } from "@/components/browser-ui/sidebar/content/sidebar-content";
 import { useSpaces } from "@/components/providers/spaces-provider";
@@ -91,6 +91,47 @@ function SidebarFooterContent() {
   return (
     <>
       <SidebarFooterUpdate />
+      
+      {/* New Menu Items */}
+      <SidebarMenu className="flex flex-col gap-1 mb-2">
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            className={cn(SIDEBAR_HOVER_COLOR, "text-black dark:text-white justify-start")}
+            onClick={() => {
+              // TODO: 实现申请入驻功能
+              console.log('申请入驻');
+            }}
+          >
+            <UserCheck className="w-4 h-4" />
+            <span className="ml-2 text-sm">申请入驻</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            className={cn(SIDEBAR_HOVER_COLOR, "text-black dark:text-white justify-start")}
+            onClick={() => {
+              // TODO: 实现消息中心功能
+              console.log('消息中心');
+            }}
+          >
+            <Bell className="w-4 h-4" />
+            <span className="ml-2 text-sm">消息中心</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            className={cn(SIDEBAR_HOVER_COLOR, "text-black dark:text-white justify-start")}
+            onClick={() => {
+              // TODO: 实现发现更多智能体功能
+              console.log('发现更多智能体');
+            }}
+          >
+            <Sparkles className="w-4 h-4" />
+            <span className="ml-2 text-sm">发现更多智能体</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+      
       <SidebarMenu className="flex flex-row justify-between">
         {/* Left Side Buttons */}
         <SidebarMenuItem>
